@@ -7,28 +7,22 @@ BonBon is a specialized tool designed to optimize the interaction between develo
 ## Design Documentation Index
 
 ### System Overview
-- [Software Architecture](software-architecture.md) - System design, components, and practical implementation
-  - *Related: [AI Architecture](ai-architecture.md) (technical implementation), [Data Model](data-model.md) (storage design)*
-- [User Stories](user-stories.md) - Core use cases and user workflows driving the design
-  - *Related: [Software Architecture](software-architecture.md) (implementation of use cases)*
+- [Software Architecture](software-architecture.md) - System design and implementation
+- [User Stories](user-stories.md) - Core use cases and workflows
 
 ### Technical Architecture
-- [AI Architecture](ai-architecture.md) - Advanced AI/ML implementation techniques and algorithms
-  - *Related: [Prompt Chain Design](prompt-chain.md) (agent system), [Static Analysis Tool](static-analysis-tool-prompt.md) (code analysis)*
-- [Prompt Chain Design](prompt-chain.md) - Context orchestration through specialized agents
-  - *Related: [AI Architecture](ai-architecture.md) (technical foundation), [Context Pack Format](context-pack.txt) (output format)*
+- [AI Architecture](ai-architecture.md) - AI/ML techniques and algorithms
+- [Prompt Chain Design](prompt-chain.md) - Specialized agent orchestration
 
 ### Core Components
-- [Data Model](data-model.md) - Core data entities and storage implementation
-  - *Related: [Software Architecture](software-architecture.md) (system integration), [Context Pack Format](context-pack.txt) (data structures)*
-- [Context Pack Format](context-pack.txt) - Context pack structure specification
-  - *Related: [Data Model](data-model.md) (storage), [Prompt Chain Design](prompt-chain.md) (generation)*
-- [Static Analysis Tool](static-analysis-tool-prompt.md) - Static analysis classification design
-  - *Related: [AI Architecture](ai-architecture.md) (analysis techniques), [Software Architecture](software-architecture.md) (integration)*
+- [Data Model](data-model.md) - Data entities and storage
+- [Context Pack Format](context-pack.txt) - Context structure specification
+- [Static Analysis Tool](static-analysis-tool-prompt.md) - Code analysis system
 
 ### Supporting Documentation
-- [Project Requirements](requirements.txt) - Dependencies and package requirements
-  - *Related: [Software Architecture](software-architecture.md) (implementation requirements)*
+- [Project Requirements](requirements.txt) - Dependencies and requirements
+
+*Each document contains cross-references to related documentation for detailed exploration of specific topics.*
 
 ## The Problem
 
