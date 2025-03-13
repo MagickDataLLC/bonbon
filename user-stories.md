@@ -1,13 +1,22 @@
 # BonBon: User Stories
 
+*Related Documentation:*
+- *System Design: [Software Architecture](software-architecture.md)*
+- *AI Features: [AI Architecture](ai-architecture.md)*
+- *Agent System: [Prompt Chain Design](prompt-chain.md)*
+- *Data Structures: [Data Model](data-model.md)*
+- *Context Format: [Context Pack Format](context-pack.txt)*
+
 ## System Architecture Overview
+
+*Implementation requirements listed in [Project Requirements](requirements.txt)*
 
 ```mermaid
 graph TD
     User([Developer]) -->|Interacts with| UI[macOS UI App]
     UI -->|Sends requests| API[API Layer]
     API -->|Processes tasks| Engine[Core Engine]
-    
+
     subgraph "Core Engine"
         Code[Code Analyzer] -->|Builds| Graph[Dependency Graph]
         Vector[Vector Store] -->|Semantic Search| Results[Search Results]
@@ -16,24 +25,24 @@ graph TD
         Generator[Booster Generator] -->|Creates| Packs[Booster Packs]
         MCP[MCP Protocol Handler] -->|Manages| UUIDs[Pack UUIDs]
     end
-    
+
     subgraph "External Systems"
         LLM[External LLMs]
         MB[MINI_BONBON]
         MCP_SRV[MCP Server]
     end
-    
+
     UI -->|Exports to| LLM
     Engine -->|Local queries| MB
     LLM -->|Retrieves context| MCP_SRV
     MCP_SRV -->|Requests packs| Engine
     MCP <-->|Provides packs| MCP_SRV
-    
+
     subgraph "Data Storage"
         DuckDB[(DuckDB)]
         LanceDB[(LanceDB)]
     end
-    
+
     Engine -->|Stores structured data| DuckDB
     Engine -->|Stores vectors| LanceDB
 ```
@@ -41,17 +50,25 @@ graph TD
 ## Personas
 
 ### Sarah - Senior Backend Developer
+*Related: See [Software Architecture](software-architecture.md#core-components) for system capabilities*
+
 Sarah leads a team developing complex distributed systems. She has 12+ years of experience and has become an expert at leveraging LLMs for specific coding tasks. She's frustrated by how often she has to manually gather context from multiple files when asking for help with architecture decisions or refactoring.
 
 ### Miguel - Junior Frontend Developer
+*Related: See [AI Architecture](ai-architecture.md#self-supervised-learning-from-developer-interactions) for learning from interactions*
+
 Miguel joined the company six months ago and is still getting familiar with their large codebase. He relies heavily on LLMs to understand existing patterns and implement new features correctly. He spends significant time trying to provide enough context in his prompts.
 
 ### Priya - Technical Product Manager
+*Related: See [Prompt Chain Design](prompt-chain.md#5-governance-agent) for governance features*
+
 Priya bridges the gap between business requirements and technical implementation. While not primarily a programmer, she has baseline coding knowledge. She uses LLMs to draft technical specifications and documentation, but struggles to include the right technical context.
 
 ## User Stories
 
 ### Sarah - Refactoring Complex Components
+
+*Related: See [Context Pack Format](context-pack.txt) for context structure*
 
 **Context:** Sarah needs to refactor a database access layer that's grown organically over two years and has become difficult to maintain.
 
@@ -115,7 +132,7 @@ sequenceDiagram
     participant VDB as Vector DB
     participant MCP as MCP Server
     participant CC as Claude-Code
-    
+
     %% Basic Workflow
     Sarah->>BB: Create task
     Sarah->>BB: Select main file
@@ -129,7 +146,7 @@ sequenceDiagram
     BB->>MCP: Return pack
     MCP->>CC: Deliver pack
     CC->>Sarah: Provide advice
-    
+
     %% Intelligent Selection Workflow
     Note over Sarah,CC: Intelligent Selection
     Sarah->>BB: Create task
@@ -147,7 +164,7 @@ sequenceDiagram
     BB->>MCP: Return pack
     MCP->>CC: Deliver pack
     CC->>Sarah: Provide advice
-    
+
     %% Task Batching Workflow
     Note over Sarah,CC: Task Batching
     Sarah->>BB: Load task list
@@ -162,6 +179,8 @@ sequenceDiagram
 ```
 
 ### Miguel - Understanding Component Interactions
+
+*Related: See [Static Analysis Tool](static-analysis-tool-prompt.md) for code analysis capabilities*
 
 **Context:** Miguel needs to add a new feature to the user authentication flow, which touches multiple components he's unfamiliar with.
 
@@ -253,7 +272,7 @@ sequenceDiagram
     participant crawl4ai
     participant LanceDB
     participant LLM
-    
+
     Sarah->>BonBon: Enter documentation URL
     BonBon->>crawl4ai: Request crawl with parameters
     crawl4ai->>crawl4ai: Extract content
@@ -304,7 +323,11 @@ sequenceDiagram
 
 ## MCP Integration Use Cases
 
+*Related: See [Data Model](data-model.md#mcp-protocol-data-flow) for protocol implementation*
+
 ### Contextual Task Lists
+
+*Related: See [AI Architecture](ai-architecture.md#hypernetworks-and-adaptive-computation) for task adaptation*
 
 **Context:** Sarah is planning a sprint with multiple related tasks that need to be completed in sequence.
 
@@ -360,7 +383,7 @@ sequenceDiagram
     participant BonBon
     participant Claude as Claude Desktop
     participant MCP as MCP Server
-    
+
     Sarah->>BonBon: Create architecture context pack
     BonBon->>BonBon: Generate pack with UUID
     BonBon->>Sarah: Return UUID
@@ -438,7 +461,7 @@ sequenceDiagram
     participant BonBon
     participant Windsurf
     participant MCP as MCP Server
-    
+
     Sarah->>BonBon: Create microservice implementation task
     BonBon->>BonBon: Analyze existing services
     BonBon->>BonBon: Generate context pack

@@ -1,10 +1,21 @@
 # BonBon: Advanced Context Orchestration Through Specialized Agents
 
+*Related Documentation:*
+- *Technical Foundation: [AI Architecture](ai-architecture.md#multi-agent-emergent-reasoning)*
+- *System Integration: [Software Architecture](software-architecture.md#core-components)*
+- *Data Structures: [Data Model](data-model.md)*
+- *Output Format: [Context Pack Format](context-pack.txt)*
+- *Real-world Usage: [User Stories](user-stories.md)*
+
 ## Overview
+
+*Implementation requirements listed in [Project Requirements](requirements.txt)*
 
 This document outlines BonBon's implementation of a Context Orchestration System built on a specialized agent architecture. Rather than using a monolithic approach to context gathering, BonBon employs a set of focused agents that efficiently collect, filter, and structure context for development tasks according to natural information patterns in software development. This system reduces token consumption and improves relevance by dividing context responsibilities across domain-specific components while addressing practical engineering constraints.
 
 ## Refined Architecture
+
+*For technical implementation details of the agent system, see [AI Architecture](ai-architecture.md#multi-agent-emergent-reasoning)*
 
 The Context Orchestration System comprises a set of distinct components organized to match how software information is actually structured and accessed:
 
@@ -33,7 +44,9 @@ The Context Orchestration System comprises a set of distinct components organize
 
 ### 1. Core LLM (Task Executor)
 
-The primary LLM responsible for completing development tasks using the context provided by the orchestration system. 
+*Related: See [Software Architecture](software-architecture.md#llm-integration) for integration details*
+
+The primary LLM responsible for completing development tasks using the context provided by the orchestration system.
 
 - **Responsibilities**:
   - Declaring task requirements
@@ -42,6 +55,8 @@ The primary LLM responsible for completing development tasks using the context p
   - Providing feedback on context quality and relevance
 
 ### 2. Static Analysis Agent (SAA)
+
+*Related: See [Static Analysis Tool](static-analysis-tool-prompt.md) for implementation details*
 
 Focused on code structure, dependencies, and static analysis.
 
@@ -55,6 +70,8 @@ Focused on code structure, dependencies, and static analysis.
 
 ### 3. Evolution Agent (EA)
 
+*Related: See [Data Model](data-model.md#dependency) for dependency tracking*
+
 Specializes in temporal context and change patterns.
 
 - **Responsibilities**:
@@ -66,6 +83,8 @@ Specializes in temporal context and change patterns.
   - Identifying abandoned approaches and development dead ends
 
 ### 4. Knowledge Agent (KA)
+
+*Related: See [Context Pack Format](context-pack.txt#context.official_documentation) for documentation format*
 
 Manages documentation and external knowledge sources.
 
@@ -79,6 +98,8 @@ Manages documentation and external knowledge sources.
   - Tracking version-specific documentation relevance
 
 ### 5. Governance Agent (GA)
+
+*Related: See [User Stories](user-stories.md#priya---technical-specification-development) for governance use cases*
 
 Ensures compliance with team standards and constraints.
 
@@ -169,15 +190,15 @@ class AgentExecutionContext:
         self.cache = cache_manager
         self.lock = asyncio.Lock()
         self.results = {}
-        
+
     async def execute_agent(self, agent_type, query, confidence_threshold=0.7):
         """Execute an agent with error handling and caching.
-        
+
         Args:
             agent_type: Type of agent to execute
             query: Query to execute
             confidence_threshold: Minimum confidence score
-            
+
         Returns:
             Agent results with confidence scores
         """
@@ -187,25 +208,25 @@ class AgentExecutionContext:
             cached_result = self.cache.get(cache_key)
             if not self.cache.is_stale(cache_key):
                 return cached_result
-        
+
         # Create appropriate agent
         agent = self._create_agent(agent_type)
-        
+
         # Execute with retries and error handling
         try:
             # Acquire lock for database operations
             async with self.lock:
                 result = await agent.execute(query)
-            
+
             # Validate results
             if result.confidence < confidence_threshold:
                 # Try fallback strategies
                 result = await self._execute_fallback(agent_type, query)
-            
+
             # Update cache
             self.cache.set(cache_key, result)
             return result
-            
+
         except Exception as e:
             logger.error(f"Agent execution failed: {e}")
             # Return best-effort results or cached data
@@ -458,61 +479,61 @@ class ProgressiveDisclosureManager:
             'detailed': 0.7,    # Detailed information (70% of tokens)
             'complete': 1.0     # Complete context (100% of tokens)
         }
-        
+
     def get_context_for_level(self, context_pack, level, confidence_threshold=0.7):
         """Get context at a specific disclosure level.
-        
+
         Args:
             context_pack: Complete context pack
             level: Disclosure level ('summary', 'overview', 'detailed', 'complete')
             confidence_threshold: Minimum confidence score for inclusion
-            
+
         Returns:
             Filtered context pack at requested level
         """
         if level not in self.disclosure_levels:
             level = 'overview'  # Default to overview
-            
+
         token_ratio = self.disclosure_levels[level]
-        
+
         # Filter by confidence first
         filtered_by_confidence = self._filter_by_confidence(
             context_pack, confidence_threshold)
-        
+
         # Then apply progressive disclosure
         return self._apply_token_budget(
             filtered_by_confidence, token_ratio * context_pack['total_tokens'])
-    
+
     def _filter_by_confidence(self, context_pack, threshold):
         """Filter context items by confidence score."""
         filtered_pack = copy.deepcopy(context_pack)
-        
+
         for category in ['code_chunks', 'doc_chunks']:
             filtered_pack[category] = [
                 item for item in filtered_pack[category]
                 if item.get('confidence', 0) >= threshold
             ]
-            
+
         return filtered_pack
-    
+
     def _apply_token_budget(self, context_pack, token_budget):
         """Apply token budget to context pack."""
         result_pack = copy.deepcopy(context_pack)
         result_pack['code_chunks'] = []
         result_pack['doc_chunks'] = []
-        
+
         # Sort all items by confidence and relevance combined
         all_items = []
         for category in ['code_chunks', 'doc_chunks']:
             for item in context_pack[category]:
                 item['category'] = category
                 all_items.append(item)
-                
+
         # Sort by combined score
         all_items.sort(key=lambda x: (
             x.get('confidence', 0) * 0.6 + x.get('relevance_score', 0) * 0.4
         ), reverse=True)
-        
+
         # Fill until budget is reached
         current_tokens = 0
         for item in all_items:
@@ -521,7 +542,7 @@ class ProgressiveDisclosureManager:
                 current_tokens += item.get('token_count', 0)
             else:
                 break
-                
+
         result_pack['disclosure_level'] = current_tokens / context_pack['total_tokens']
         return result_pack
 ```
@@ -543,7 +564,7 @@ class ContextCache:
             'knowledge': self._check_doc_updates,
             'governance': self._check_policy_changes
         }
-    
+
     def get(self, key):
         """Get item from cache with LRU update."""
         if key in self.cache:
@@ -552,43 +573,43 @@ class ContextCache:
             self.cache[key] = value
             return value
         return None
-    
+
     def set(self, key, value):
         """Set cache item with timestamp."""
         if len(self.cache) >= self.max_size:
             # Remove least recently used item
             self.cache.popitem(last=False)
-        
+
         self.cache[key] = value
         self.timestamps[key] = time.time()
-    
+
     def is_stale(self, key):
         """Check if cache item is stale based on TTL and triggers."""
         if key not in self.cache:
             return True
-            
+
         # Check time-based expiration
         if time.time() - self.timestamps[key] > self.ttl:
             return True
-            
+
         # Check invalidation triggers
         agent_type = key.split(':', 1)[0]
         if agent_type in self.invalidation_triggers:
             trigger_func = self.invalidation_triggers[agent_type]
             return trigger_func(key, self.cache[key])
-            
+
         return False
-    
+
     def _check_file_changes(self, key, value):
         """Check if files in the cached result have changed."""
         # Implementation would check file modification times
         pass
-        
+
     def _check_new_commits(self, key, value):
         """Check if new commits affect the cached result."""
         # Implementation would check git history
         pass
-        
+
     # Other invalidation triggers...
 ```
 
@@ -607,35 +628,35 @@ class TokenBudgetManager:
             'governance': 0.20
         }
         self.task_type_allocations = {}
-        
+
     def get_allocation(self, task_description, total_budget):
         """Get token allocations for a task.
-        
+
         Args:
             task_description: Description of the task
             total_budget: Total available tokens
-            
+
         Returns:
             Dictionary with token allocations per agent
         """
         # Classify task type
         task_type = self._classify_task(task_description)
-        
+
         # Get allocation ratios for this task type
         if task_type in self.task_type_allocations:
             allocation_ratios = self.task_type_allocations[task_type]
         else:
             allocation_ratios = self.default_allocations
-            
+
         # Convert ratios to token counts
         return {
             agent: int(ratio * total_budget)
             for agent, ratio in allocation_ratios.items()
         }
-        
+
     def update_from_feedback(self, task_type, agent_usage, feedback_scores):
         """Update allocations based on feedback.
-        
+
         Args:
             task_type: Type of task
             agent_usage: Actual token usage by agent
@@ -646,32 +667,32 @@ class TokenBudgetManager:
             current = self.task_type_allocations[task_type]
         else:
             current = self.default_allocations.copy()
-            
+
         # Calculate target allocation based on usage and relevance
         total_weighted_usage = sum(
-            usage * score 
+            usage * score
             for agent, (usage, score) in zip(agent_usage.keys(), feedback_scores.items())
         )
-        
+
         target = {
             agent: (usage * feedback_scores[agent]) / total_weighted_usage
             for agent, usage in agent_usage.items()
         }
-        
+
         # Update using learning rate
         updated = {
-            agent: current.get(agent, 0) * (1 - self.learning_rate) + 
+            agent: current.get(agent, 0) * (1 - self.learning_rate) +
                    target[agent] * self.learning_rate
             for agent in target
         }
-        
+
         # Normalize to ensure sum is 1.0
         total = sum(updated.values())
         normalized = {
             agent: value / total
             for agent, value in updated.items()
         }
-        
+
         self.task_type_allocations[task_type] = normalized
 ```
 
@@ -698,12 +719,12 @@ class MINI_BONBON_Trainer:
             'query_formation': './data/queries/',
             'context_selection': './data/contexts/'
         }
-        
+
     def prepare_training_data(self):
         """Prepare specialized training datasets from developer interactions."""
         # Implementation collects successful context selections
         pass
-        
+
     def fine_tune(self):
         """Fine-tune the model on specialized tasks."""
         # Implementation uses appropriate training approach
@@ -754,7 +775,7 @@ def create_synthetic_training_data():
         },
         # Additional scenarios...
     ]
-    
+
     return conflict_scenarios
 ```
 
@@ -768,10 +789,10 @@ To continuously improve the system, we implement comprehensive data collection:
 class ContextTelemetry:
     def __init__(self, database_connection):
         self.db = database_connection
-        
+
     def record_context_usage(self, pack_id, usage_data):
         """Record which context elements were actually used.
-        
+
         Args:
             pack_id: Unique identifier for the context pack
             usage_data: Data about how context was used
@@ -780,7 +801,7 @@ class ContextTelemetry:
         for item in context_items:
             self.db.execute("""
                 INSERT INTO context_usage (
-                    pack_id, item_id, was_referenced, reference_count, 
+                    pack_id, item_id, was_referenced, reference_count,
                     developer_feedback_score
                 ) VALUES (?, ?, ?, ?, ?)
             """, [
@@ -798,10 +819,10 @@ class ContextTelemetry:
 class FeedbackCollector:
     def __init__(self, database_connection):
         self.db = database_connection
-        
+
     def collect_explicit_feedback(self, pack_id, feedback_data):
         """Collect explicit developer feedback on context relevance.
-        
+
         Args:
             pack_id: Unique identifier for the context pack
             feedback_data: Developer feedback data
@@ -826,28 +847,28 @@ class FeedbackCollector:
 ```python
 def analyze_context_effectiveness(pack_id, human_curated_context):
     """Compare system-generated context with human-curated context.
-    
+
     Args:
         pack_id: Unique identifier for the system-generated context
         human_curated_context: Context selected by human developers
-        
+
     Returns:
         Analysis of differences and potential improvements
     """
     system_context = get_context_pack(pack_id)
-    
+
     # Find items in system context not in human context (potential noise)
-    noise_items = [item for item in system_context['all_items'] 
+    noise_items = [item for item in system_context['all_items']
                   if item['id'] not in [h['id'] for h in human_curated_context]]
-    
+
     # Find items in human context not in system context (potential gaps)
     gap_items = [item for item in human_curated_context
                 if item['id'] not in [s['id'] for s in system_context['all_items']]]
-    
+
     # Calculate precision and recall
     precision = len(system_context['all_items']) - len(noise_items) / len(system_context['all_items'])
     recall = len(system_context['all_items']) - len(gap_items) / len(human_curated_context)
-    
+
     return {
         'precision': precision,
         'recall': recall,
@@ -866,13 +887,13 @@ To measure system effectiveness, we implement a comprehensive evaluation framewo
 class ContextEvaluator:
     def __init__(self, database_connection):
         self.db = database_connection
-        
+
     def evaluate_context_relevance(self, pack_id):
         """Evaluate context relevance based on usage patterns.
-        
+
         Args:
             pack_id: Unique identifier for the context pack
-            
+
         Returns:
             Relevance metrics
         """
@@ -883,13 +904,13 @@ class ContextEvaluator:
             LEFT JOIN context_usage u ON i.id = u.item_id AND i.pack_id = u.pack_id
             WHERE i.pack_id = ?
         """, [pack_id]).fetchall()
-        
+
         # Calculate metrics
         total_items = len(items)
         referenced_items = sum(1 for item in items if item['was_referenced'])
         token_count = sum(item['token_count'] for item in items)
         referenced_tokens = sum(item['token_count'] for item in items if item['was_referenced'])
-        
+
         return {
             'relevance_ratio': referenced_items / total_items if total_items > 0 else 0,
             'token_efficiency': referenced_tokens / token_count if token_count > 0 else 0,
@@ -902,26 +923,26 @@ class ContextEvaluator:
 ```python
 def analyze_token_efficiency(pack_id, task_output):
     """Analyze token efficiency for a completed task.
-    
+
     Args:
         pack_id: Unique identifier for the context pack
         task_output: Output produced using the context
-        
+
     Returns:
         Token efficiency metrics
     """
     context_pack = get_context_pack(pack_id)
-    
+
     # Calculate tokens used vs. tokens included
     context_tokens = context_pack['total_tokens']
     output_tokens = count_tokens(task_output)
-    
+
     # Extract references to context items
     references = extract_context_references(task_output)
-    referenced_items = [item for item in context_pack['all_items'] 
+    referenced_items = [item for item in context_pack['all_items']
                        if item['id'] in references]
     referenced_tokens = sum(item['token_count'] for item in referenced_items)
-    
+
     return {
         'context_tokens': context_tokens,
         'output_tokens': output_tokens,
@@ -936,12 +957,12 @@ def analyze_token_efficiency(pack_id, task_output):
 ```python
 def evaluate_task_completion(task_id, output, developer_review):
     """Evaluate task completion effectiveness.
-    
+
     Args:
         task_id: Unique identifier for the task
         output: Task output
         developer_review: Developer review data
-        
+
     Returns:
         Task completion metrics
     """

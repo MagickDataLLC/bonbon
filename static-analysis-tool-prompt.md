@@ -1,6 +1,15 @@
 # Task: Develop a Targeted Static Analysis Tool for BonBon Classification System
 
+*Related Documentation:*
+- *AI Integration: [AI Architecture](ai-architecture.md#neuro-symbolic-reasoning-engine)*
+- *System Context: [Software Architecture](software-architecture.md#code-analyzer)*
+- *Agent Usage: [Prompt Chain Design](prompt-chain.md#2-static-analysis-agent)*
+- *Data Storage: [Data Model](data-model.md#codefile)*
+
 ## Overview
+
+*Implementation requirements listed in [Project Requirements](requirements.txt)*
+
 Create a Python-based static analysis tool that:
 1. Accepts classification codes (e.g., "5.2.2.0-v1") as input
 2. Identifies relevant files matching that classification
@@ -8,6 +17,9 @@ Create a Python-based static analysis tool that:
 4. Outputs results in a structured JSON format compatible with our context booster pack system
 
 ## Classification System Integration
+
+*Related: See [Context Pack Format](context-pack.txt#context.entry_points) for output format*
+
 Use our BonBon classification manifest (format shown below) to identify relevant files:
 
 ```toml
@@ -23,6 +35,9 @@ The tool should:
 - Include configurable "related" classifications
 
 ## Static Analysis Requirements
+
+*Related: See [AI Architecture](ai-architecture.md#causal-knowledge-graphs) for dependency analysis*
+
 Implement these analysis types:
 - AST-based structural analysis (imports, dependencies, function signatures)
 - Control flow analysis (complexity, edge cases, error handling)
@@ -32,11 +47,17 @@ Implement these analysis types:
 Use libraries like `libcst`, `astroid`, or `jedi` for parsing and analysis.
 
 ## Performance Considerations
+
+*Related: See [Software Architecture](software-architecture.md#scaling-considerations) for system-wide performance*
+
 - Implement incremental analysis (only analyze changed files)
 - Cache analysis results with classification-aware invalidation
 - Support parallel analysis for larger codebases
 
 ## Output Format
+
+*Related: See [Context Pack Format](context-pack.txt) for integration with context packs*
+
 JSON structured as:
 
 ```json

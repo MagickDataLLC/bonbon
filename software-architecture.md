@@ -1,6 +1,15 @@
 # BonBon: Software Architecture
 
+*Related Documentation:*
+- *AI Components: [AI Architecture](ai-architecture.md)*
+- *Agent System: [Prompt Chain Design](prompt-chain.md)*
+- *Data Storage: [Data Model](data-model.md)*
+- *Context Format: [Context Pack Format](context-pack.txt)*
+- *Use Cases: [User Stories](user-stories.md)*
+
 ## System Overview
+
+*Implementation dependencies listed in [Project Requirements](requirements.txt)*
 
 BonBon is an intelligent context management system that optimizes the interaction between developers and LLMs by generating task-specific "Context Booster Packs." The system analyzes code dependencies, performs semantic searches, and manages token budgets to provide just the right context.
 
@@ -32,6 +41,8 @@ BonBon is an intelligent context management system that optimizes the interactio
 
 ### 1. Core Engine
 
+*Related: See [AI Architecture](ai-architecture.md#core-innovations) for AI implementation details*
+
 The heart of BonBon handling all analysis and intelligence.
 
 ```
@@ -42,7 +53,7 @@ The heart of BonBon handling all analysis and intelligence.
 │  │ Code Analyzer │   │ Vector Storage │   │ Token   │  │
 │  │ - AST parsing │   │ - LanceDB      │   │ Counter │  │
 │  │ - Git history │   │ - Embeddings   │   │         │  │
-│  └───────────────┘   └────────────────┘   └─────────┘  │
+│  │ └───────────────┘   └────────────────┘   └─────────┘  │
 │                                                        │
 │  ┌───────────────┐   ┌────────────────┐   ┌─────────┐  │
 │  │ Doc Harvester │   │ Booster Pack   │   │ Cache   │  │
@@ -61,12 +72,14 @@ The heart of BonBon handling all analysis and intelligence.
 ```
 
 #### Code Analyzer
+*Related: See [Static Analysis Tool](static-analysis-tool-prompt.md) for classification implementation*
 - **Static Analysis**: Uses Python's AST and Jedi for code parsing
 - **Dependency Tracking**: Builds a dependency graph of modules/imports
 - **Git Integration**: Uses repository history to identify recent changes
 - **Semantic Matching**: Maps task descriptions to code components
 
 #### Data Storage
+*Related: See [Data Model](data-model.md#storage-implementation) for storage details*
 - **Structured Data**: Uses DuckDB for relational data and complex queries
 - **Vector Database**: Uses LanceDB for embeddings and similarity search
 - **Document Indexing**: Chunks and stores documentation with metadata
@@ -79,6 +92,7 @@ The heart of BonBon handling all analysis and intelligence.
 - **Truncation Strategy**: Intelligent truncation preserving context
 
 #### Document Harvester
+*Related: See [Prompt Chain Design](prompt-chain.md#4-knowledge-agent) for agent implementation*
 - **API Integration**: Direct integration with DevDocs API and documentation repositories
 - **DocSet Support**: Import from Zeal/Dash docsets for offline documentation
 - **URL Processing**: Fallback web crawling for unsupported documentation sites
@@ -125,6 +139,8 @@ The heart of BonBon handling all analysis and intelligence.
 
 ### 2. API Layer
 
+*Related: See [Context Pack Format](context-pack.txt) for data exchange format*
+
 The communication bridge between UI, core engine, and external systems.
 
 ```
@@ -161,6 +177,8 @@ The communication bridge between UI, core engine, and external systems.
 
 ### 3. macOS UI Application
 
+*Related: See [User Stories](user-stories.md#sarah---refactoring-complex-components) for UI workflows*
+
 The native interface for developer interaction.
 
 ```
@@ -196,6 +214,8 @@ The native interface for developer interaction.
 - **UUID Management**: Manage and share pack identifiers
 
 ### 4. MCP Server
+
+*Related: See [Data Model](data-model.md#mcp-protocol-data-flow) for protocol implementation*
 
 The Model Context Protocol server enables LLMs to retrieve context packs dynamically.
 
@@ -270,6 +290,8 @@ The Model Context Protocol server enables LLMs to retrieve context packs dynamic
 ```
 
 ## MCP Protocol Integration
+
+*Related: See [User Stories](user-stories.md#mcp-integration-use-cases) for integration examples*
 
 The Model Context Protocol (MCP) is a key component that enables LLMs to dynamically retrieve context during their operation. This integration allows for "just-in-time" context delivery, significantly enhancing token efficiency by enabling:
 
@@ -361,7 +383,9 @@ Response:
 }
 ```
 
-### Tool Integration Adapters
+## Tool Integration Adapters
+
+*Related: See [AI Architecture](ai-architecture.md#hypernetworks-and-adaptive-computation) for adaptation mechanisms*
 
 The MCP Server includes specialized adapters for popular development tools:
 

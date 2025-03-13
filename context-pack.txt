@@ -87,7 +87,7 @@ confidence = 9
 source = "docs/MCP_Protocol_Specification.md"
 section = "Authentication and Security"
 content = """
-All MCP requests require API key validation through Bearer authentication. 
+All MCP requests require API key validation through Bearer authentication.
 Keys should be hashed before storage and comparison.
 """
 api_version = "1.0.2"
@@ -165,9 +165,9 @@ confidence = 8
 
 [instructions]
 text = """
-You are implementing the MCP protocol handler for dynamic context retrieval. 
-Focus on security, performance, and backward compatibility. 
-Note that authentication is transitioning from Basic to OAuth2/Bearer. 
+You are implementing the MCP protocol handler for dynamic context retrieval.
+Focus on security, performance, and backward compatibility.
+Note that authentication is transitioning from Basic to OAuth2/Bearer.
 The implementation needs additional test coverage and audit logging.
 Rate limiting is a priority requirement that's currently missing.
 """
