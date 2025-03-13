@@ -1,0 +1,173 @@
+# BonBon Context Booster Pack
+
+[metadata]
+pack_id = "67cd9a12-88ef-4abe-9f54-123456789abc"
+created_at = "2024-03-12T15:32:40Z"
+total_tokens = 4235
+target_model = "claude-3-opus-20240229"
+disclosure_level = "detailed"
+confidence_threshold = 0.7
+expiration = "2024-03-19T15:32:40Z"
+
+[task]
+description = "Implement MCP protocol handler for dynamic context retrieval"
+components = ["src/core_engine.py", "src/api_layer.py", "src/mcp_protocol.py"]
+estimated_tokens = 3000
+
+[token_budget]
+static_analysis = 1200
+evolution = 950
+knowledge = 1250
+governance = 835
+
+# Static Analysis Agent Output
+[[context.entry_points]]
+file = "src/mcp_protocol.py"
+line = 42
+function = "retrieve_context"
+relevance = 9
+confidence = 8
+reasoning = "Main entry point for MCP protocol context retrieval"
+
+[[context.dependencies]]
+primary = "src/core_engine.py"
+calls = 17
+used_by = 3
+contract = "def get_booster_pack(uuid: str) -> Optional[Dict[str, Any]]"
+confidence = 9
+excluded_dependencies = ["src/database.py", "src/utils.py"]
+exclusion_reasoning = "Only indirectly related through generic utilities"
+
+[[context.patterns]]
+pattern = "Request validation with fallback"
+location = "src/api_layer.py"
+applicability = 8
+confidence = 7
+
+[[context.performance_bottlenecks]]
+location = "src/core_engine.py"
+line = 156
+issue = "Pack retrieval lacks caching for repeated requests"
+impact = "HIGH"
+confidence = 8
+
+# Evolution Agent Output
+[[context.recent_changes]]
+component = "src/api_layer.py"
+last_changed = "2024-02-15"
+age_weighted_confidence = 8
+relevance = 9
+authors = ["sarah@example.com", "miguel@example.com"]
+commit_messages = ["Added WebSocket support for real-time updates", "Fixed race condition in request handling"]
+change_frequency = "HIGH"
+
+[[context.refactoring_patterns]]
+pattern = "Protocol versioning"
+applied_in = ["src/api_layer.py", "src/core_engine.py"]
+motivation = "Supporting backward compatibility with earlier clients"
+confidence = 7
+
+[[context.abandoned_approaches]]
+approach = "REST-only implementation without WebSockets"
+last_active = "2024-01-20"
+evidence = ["a1b2c3d", "e4f5g6h"]
+abandonment_reason = "Poor performance for real-time updates"
+confidence = 9
+
+[[context.issues]]
+id = 342
+title = "MCP protocol timeouts with large context packs"
+status = "OPEN"
+age = 12
+relevance = 8
+confidence = 9
+
+# Knowledge Agent Output
+[[context.official_documentation]]
+source = "docs/MCP_Protocol_Specification.md"
+section = "Authentication and Security"
+content = """
+All MCP requests require API key validation through Bearer authentication. 
+Keys should be hashed before storage and comparison.
+"""
+api_version = "1.0.2"
+version_relevance = 9
+confidence = 10
+
+[[context.community_resources]]
+source = "https://github.com/discussions/mcp-protocol/42"
+type = "GitHub"
+content = "Implementing connection pooling reduced latency by 40% for most MCP implementations"
+date = "2024-01-30"
+credibility = 8
+confidence = 7
+
+[[context.deprecation_notices]]
+feature = "Basic authentication for MCP"
+deprecation_date = "2024-04-01"
+alternative = "OAuth2 or API key with Bearer token"
+impact = "HIGH"
+confidence = 9
+
+[[context.conflicting_information]]
+topic = "Optimal caching strategy for context packs"
+source_a = "docs/performance.md suggests LRU with 30-minute TTL"
+source_b = "Example implementation uses sliding window with 2-hour TTL"
+resolution = "Source A is more current and based on production metrics"
+confidence = 8
+
+# Governance Agent Output
+[[context.coding_standards]]
+standard = "Security-Reviews-Policy-v2"
+requirement = "All authentication handlers must pass security review"
+affected_components = ["src/mcp_protocol.py", "src/api_layer.py"]
+compliance_level = "Partially"
+priority = 9
+confidence = 10
+
+[[context.test_requirements]]
+component = "src/mcp_protocol.py"
+current_coverage = "68%"
+required_coverage = "80%"
+test_types = ["unit", "integration"]
+priority = 8
+confidence = 10
+
+[[context.security_constraints]]
+constraint = "Rate limiting for MCP requests"
+affected_components = ["src/api_layer.py"]
+compliance_level = "Non-Compliant"
+risk_level = "MEDIUM"
+priority = 8
+confidence = 9
+
+[[context.compliance_gaps]]
+gap = "Missing audit logging for context access"
+standard = "Data-Access-Audit-v1.3"
+risk_level = "MEDIUM"
+remediation = "Implement structured logging with access timestamps and requester IDs"
+priority = 7
+confidence = 9
+
+[[context.business_requirements]]
+requirement = "Support for third-party LLM integration"
+user_story = "BOND-127"
+affected_components = ["src/mcp_protocol.py"]
+priority = 9
+confidence = 8
+
+[code_chunks]
+# Example code chunks would be included here
+# Using triple quotes for multi-line code
+
+[doc_chunks]
+# Example documentation chunks would be included here
+
+[instructions]
+text = """
+You are implementing the MCP protocol handler for dynamic context retrieval. 
+Focus on security, performance, and backward compatibility. 
+Note that authentication is transitioning from Basic to OAuth2/Bearer. 
+The implementation needs additional test coverage and audit logging.
+Rate limiting is a priority requirement that's currently missing.
+"""

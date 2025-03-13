@@ -1,0 +1,39 @@
+# Core dependencies
+fastapi
+uvicorn
+pydantic
+duckdb
+lancedb
+tiktoken
+sentence-transformers
+
+# Code analysis
+jedi
+networkx
+gitpython
+ast2json
+
+# Documentation processing
+httpx
+requests
+beautifulsoup4
+markdownify
+trafilatura
+crawl4ai  # Optional but supported
+inscriptis
+lxml
+docset-tools
+
+# Web interface
+websockets
+pyqt6
+pygments
+
+# Testing and development
+pytest
+pytest-asyncio
+pytest-mock
+pytest-cov
+black
+isort
+mypy
